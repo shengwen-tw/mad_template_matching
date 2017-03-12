@@ -75,10 +75,10 @@ void calculate_image_mad(uint8_t *mad_map, uint8_t *full_img, uint8_t *search_im
 	min_mad = mad_map[0] = calculate_mad(&full_img[0], search_img);
 
 	int i, j;
-	for(i = 1; i < MAD_MAP_SIZE; i++) {
+	for(i = 0; i < MAD_MAP_SIZE; i++) {
 		for(j = 1 ; j < MAD_MAP_SIZE; j++) {
 			mad = mad_map[i * MAD_MAP_SIZE + j] =
-				calculate_mad(&full_img[i * MAD_MAP_SIZE + j], search_img);
+				calculate_mad(&full_img[i * FULL_IMG_SIZE + j], search_img);
 
 			if(mad < min_mad) {
 				min_mad = mad;
