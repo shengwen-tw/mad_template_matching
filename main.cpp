@@ -119,7 +119,11 @@ int main()
 	print_picture_value(&mad_map[0][0], MAD_MAP_SIZE);
 	printf("Best matched position:(%d, %d)\n", match_i, match_j);
 
-	cv::circle(mat_full_img, Point(match_i * SAMPLE_RATE, match_j * SAMPLE_RATE), 3, Scalar(0, 0, 255), 2, CV_AA, 0);
+	int x1 = match_i * SAMPLE_RATE;
+	int y1 = match_j * SAMPLE_RATE;
+	int x2 = (match_i + SEARCH_IMG_SIZE) * SAMPLE_RATE;
+	int y2 = (match_j + SEARCH_IMG_SIZE) * SAMPLE_RATE;
+	cv::rectangle(mat_full_img, Point(x1, y1), Point(x2, y2), Scalar(0,0,255), 2);
 	cv::imshow("full image", mat_full_img);
 	cv::imshow("search image", mat_search_img);
 
