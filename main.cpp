@@ -25,26 +25,29 @@ void read_image()
 	mat_full_img = imread("polandball.jpg");
 	mat_search_img = imread("search.jpg");
 
-	/* convert to grey scale but represent in rgb space */
+	/* convert to grey scale  */
 	cv::cvtColor(mat_full_img, mat_full_img, CV_BGR2GRAY);
-	cv::cvtColor(mat_full_img, mat_full_img, CV_GRAY2BGR);
 	cv::cvtColor(mat_search_img, mat_search_img, CV_BGR2GRAY);
-	cv::cvtColor(mat_search_img, mat_search_img, CV_GRAY2BGR);
+
 
 	/* Do down sampling and save to uint8_t array */
 	for(int i = 0; i < FULL_IMG_SIZE; i++) {
 		for(int j = 0; j < FULL_IMG_SIZE; j++) {
 			full_image[i][j] =
-				mat_full_img.at<uint8_t>(Point(i * SAMPLE_RATE, j * SAMPLE_RATE));
+				mat_full_img.at<uint8_t>(Point(j * SAMPLE_RATE, i * SAMPLE_RATE));
 		}
 	}
 
 	for(int i = 0; i < SEARCH_IMG_SIZE; i++) {
 		for(int j = 0; j < SEARCH_IMG_SIZE; j++) {
 			search_image[i][j] =
-				mat_search_img.at<uint8_t>(Point(i * SAMPLE_RATE, j * SAMPLE_RATE));
+				mat_search_img.at<uint8_t>(Point(j * SAMPLE_RATE, i * SAMPLE_RATE));
 		}
 	}
+
+	/* Convert back to rgb color space (represent grey scale in rgb) */
+	cv::cvtColor(mat_full_img, mat_full_img, CV_GRAY2BGR);
+	cv::cvtColor(mat_search_img, mat_search_img, CV_GRAY2BGR);
 }
 
 uint8_t calculate_mad(uint8_t *full_img, uint8_t *search_img)
@@ -101,6 +104,14 @@ void print_picture_value(uint8_t *image_arr, int size)
 		printf("\n");
 	}
 	printf("\n");
+}
+
+void show_down_sample_image()
+{
+	cv::Mat down_full_img = cv::Mat(FULL_IMG_SIZE, FULL_IMG_SIZE, CV_8UC1, full_image);
+	cv::imshow("down sample - full image", down_full_img);
+	cv::Mat down_search_img = cv::Mat(SEARCH_IMG_SIZE, SEARCH_IMG_SIZE, CV_8UC1, search_image);
+	cv::imshow("down sample - search image", down_search_img);
 }
 
 int main()
