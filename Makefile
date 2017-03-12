@@ -8,6 +8,7 @@ CC=g++
 #################################################################
 #include files
 CFLAGS=`pkg-config opencv --cflags` `pkg-config opencv --libs`
+CFLAGS+=-Ofast
 LDFLAGS:=
 
 #################################################################
