@@ -12,7 +12,7 @@ LDFLAGS:=
 
 #################################################################
 #compile all c++ files in dir
-SRC=main.cpp block_match.cpp
+SRC=main.cpp
 
 #################################################################
 OUTPUT=./output
