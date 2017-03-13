@@ -1,3 +1,3 @@
-block_match
+template_match
 *.o
 *.sw*
