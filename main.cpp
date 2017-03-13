@@ -24,7 +24,7 @@ void read_image()
 {
 	/* Read my cute polandball pictures */
 	mat_full_img = imread("polandball.jpg");
-	mat_search_img = imread("search.jpg");
+	mat_search_img = imread("search1.jpg");
 
 	/* convert to grey scale  */
 	cv::cvtColor(mat_full_img, mat_full_img, CV_BGR2GRAY);
