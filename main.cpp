@@ -59,7 +59,7 @@ uint8_t calculate_mad(uint8_t *full_img, uint8_t *search_img)
 		for(j = 0; j < SEARCH_IMG_SIZE; j++) {
 			mad += abs(
 				search_img[i * SEARCH_IMG_SIZE + j] -
-				full_img[i * SEARCH_IMG_SIZE + j]
+				full_img[i * FULL_IMG_SIZE + j]
 			);
 		}
 	}
