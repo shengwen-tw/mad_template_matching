@@ -12,9 +12,10 @@ using namespace cv;
 #define SEARCH_IMG_SIZE (64 / SAMPLE_RATE)
 #define MAD_MAP_SIZE (FULL_IMG_SIZE - SEARCH_IMG_SIZE + 1)
 
-uint8_t full_image[FULL_IMG_SIZE][FULL_IMG_SIZE] = {0};
-uint8_t search_image[SEARCH_IMG_SIZE][SEARCH_IMG_SIZE] = {0};
-uint8_t mad_map[MAD_MAP_SIZE][MAD_MAP_SIZE] = {0};
+uint8_t full_image[FULL_IMG_SIZE][FULL_IMG_SIZE] = {0}; //image to search on
+uint8_t search_image[SEARCH_IMG_SIZE][SEARCH_IMG_SIZE] = {0}; //template image
+uint8_t mad_map[MAD_MAP_SIZE][MAD_MAP_SIZE] = {0}; //mean absolute difference map
+uint8_t match_prob_map[MAD_MAP_SIZE][MAD_MAP_SIZE] = {0}; //match probability map
 
 cv::Mat mat_full_img;
 cv::Mat mat_search_img;
@@ -114,16 +115,22 @@ void show_down_sample_image()
 	cv::imshow("down sample - search image", down_search_img);
 }
 
-void show_mad_map()
+void show_match_probability_map()
 {
 	for(int i = 0; i < MAD_MAP_SIZE; i++) {
-		for(int j = 0; i < MAD_MAP_SIZE; i++) {
-			mad_map[i][j] = 255 - mad_map[i][j];
+		for(int j = 0; j < MAD_MAP_SIZE; j++) {
+			match_prob_map[i][j] = 255 - mad_map[i][j];
 		}
 	}
 
-	cv::Mat mad_map_img = cv::Mat(MAD_MAP_SIZE, MAD_MAP_SIZE, CV_8UC1, mad_map);
-	cv::imshow("mad map", mad_map_img);
+	cv::Mat match_prob_img = cv::Mat(MAD_MAP_SIZE, MAD_MAP_SIZE, CV_8UC1, match_prob_map);
+	cv::imshow("match probality map", match_prob_img);
+}
+
+void show_absolute_difference_map()
+{
+	cv::Mat ad_img = cv::Mat(MAD_MAP_SIZE, MAD_MAP_SIZE, CV_8UC1, mad_map);
+	cv::imshow("absolute difference map", ad_img);
 }
 
 int main()
@@ -149,7 +156,8 @@ int main()
 	cv::imshow("full image", mat_full_img);
 	cv::imshow("search image", mat_search_img);
 
-	show_mad_map();
+	//show_match_probability_map();
+	show_absolute_difference_map();
 
 	cv::waitKey(0);
 
