@@ -75,7 +75,7 @@ void calculate_image_mad(uint8_t *mad_map, uint8_t *full_img, uint8_t *search_im
 	int min_mad, mad;
 	int _match_i = 0, _match_j = 0;
 
-	min_mad = mad_map[0] = calculate_mad(&full_img[0], search_img);
+	min_mad = 255; //Initial rest
 
 	int i, j;
 	for(i = 0; i < MAD_MAP_SIZE; i++) {
@@ -134,7 +134,6 @@ int main()
 	print_picture_value(&full_image[0][0], FULL_IMG_SIZE);
 	//printf("search image down sample by factor 1/%d:\n", SAMPLE_RATE);
 	print_picture_value(&search_image[0][0], SEARCH_IMG_SIZE);
-
 
 	int match_i = 0, match_j = 0;
 	printf("mean absolute difference of two images\n");
