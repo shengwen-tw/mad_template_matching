@@ -7,7 +7,7 @@
 using namespace std;
 using namespace cv;
 
-#define SAMPLE_RATE 32
+#define SAMPLE_RATE 1
 #define FULL_IMG_SIZE (640 / SAMPLE_RATE) //pixel
 #define SEARCH_IMG_SIZE (64 / SAMPLE_RATE)
 #define MAD_MAP_SIZE (FULL_IMG_SIZE - SEARCH_IMG_SIZE + 1)
@@ -79,7 +79,7 @@ void calculate_image_mad(uint8_t *mad_map, uint8_t *full_img, uint8_t *search_im
 
 	int i, j;
 	for(i = 0; i < MAD_MAP_SIZE; i++) {
-		for(j = 1 ; j < MAD_MAP_SIZE; j++) {
+		for(j = 0 ; j < MAD_MAP_SIZE; j++) {
 			mad = mad_map[i * MAD_MAP_SIZE + j] =
 				calculate_mad(&full_img[i * FULL_IMG_SIZE + j], search_img);
 
@@ -114,13 +114,25 @@ void show_down_sample_image()
 	cv::imshow("down sample - search image", down_search_img);
 }
 
+void show_mad_map()
+{
+	for(int i = 0; i < MAD_MAP_SIZE; i++) {
+		for(int j = 0; i < MAD_MAP_SIZE; i++) {
+			mad_map[i][j] = 255 - mad_map[i][j];
+		}
+	}
+
+	cv::Mat mad_map_img = cv::Mat(MAD_MAP_SIZE, MAD_MAP_SIZE, CV_8UC1, mad_map);
+	cv::imshow("mad map", mad_map_img);
+}
+
 int main()
 {
 	read_image();
 
 	printf("full image down sample by factor 1/%d:\n", SAMPLE_RATE);
 	print_picture_value(&full_image[0][0], FULL_IMG_SIZE);
-	printf("search image down sample by factor 1/%d:\n", SAMPLE_RATE);
+	//printf("search image down sample by factor 1/%d:\n", SAMPLE_RATE);
 	print_picture_value(&search_image[0][0], SEARCH_IMG_SIZE);
 
 
@@ -137,6 +149,8 @@ int main()
 	cv::rectangle(mat_full_img, Point(x1, y1), Point(x2, y2), Scalar(0,0,255), 2);
 	cv::imshow("full image", mat_full_img);
 	cv::imshow("search image", mat_search_img);
+
+	show_mad_map();
 
 	cv::waitKey(0);
 
