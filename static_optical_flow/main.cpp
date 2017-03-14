@@ -169,8 +169,8 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 			);
 
 			if(match == true) {
-				flow_info[i][j].match_point.x = match_x;
-				flow_info[i][j].match_point.y = match_y;
+				flow_info[i][j].match_point.x = match_x + TEMPLATE_SIZE / 2;
+				flow_info[i][j].match_point.y = match_y + TEMPLATE_SIZE / 2;
 				flow_info[i][j].no_match_point = false;
 				flow_info[i][j].match_dist = sqrt(
 					((float)match_x * SAMPLE_RATE - i * SAMPLE_RATE) *
