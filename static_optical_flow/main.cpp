@@ -162,6 +162,7 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 	int i, j;
 	for(i = 0; i < TEMPLATE_NUMBER; i++) {
 		for(j = 0; j < TEMPLATE_NUMBER; j++) {
+			/* Crop and slide an 8x8 windows from current frame on last frame */
 			match = calculate_mad_full_frame(
 				&last_frame[0],
 				&curr_frame[i * FRAME_SIZE + j],
@@ -172,11 +173,11 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 				flow_info[i][j].match_point.x = match_x + TEMPLATE_SIZE / 2;
 				flow_info[i][j].match_point.y = match_y + TEMPLATE_SIZE / 2;
 				flow_info[i][j].no_match_point = false;
-				flow_info[i][j].match_dist = sqrt(
-					((float)match_x * SAMPLE_RATE - i * SAMPLE_RATE) *
-					((float)match_x * SAMPLE_RATE - i * SAMPLE_RATE) +
-					((float)match_y * SAMPLE_RATE - j * SAMPLE_RATE) *
-					((float)match_y * SAMPLE_RATE - j * SAMPLE_RATE)
+				flow_info[i][j].match_dist = sqrtf(
+					((float)match_x - (float)i) *
+					((float)match_x - (float)i) +
+					((float)match_y - (float)j) *
+					((float)match_y - (float)j)
 				);
 			} else {
 				flow_info[i][j].no_match_point = true;
@@ -185,7 +186,7 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 	}
 }
 
-void match_point_visualize(cv::Mat& frame)
+void match_point_visualize(cv::Mat& frame1, cv::Mat& frame2)
 {
 	int x;
 	int y;
@@ -193,10 +194,11 @@ void match_point_visualize(cv::Mat& frame)
 	for(int i = 0; i < TEMPLATE_NUMBER; i++) {
 		for(int j = 0; j < TEMPLATE_NUMBER; j++) {
 			if(flow_info[i][j].no_match_point == true) {
-				continue;
+				//continue;
 			}
 
-			if(flow_info[i][j].match_dist < 40) {
+			//XXX:This is actually wrong!
+			if(flow_info[i][j].match_point.x == 4 || flow_info[i][j].match_point.y == 4) {
 				continue;
 			}
 
@@ -205,8 +207,11 @@ void match_point_visualize(cv::Mat& frame)
 
 			x = flow_info[i][j].match_point.y * SAMPLE_RATE;
 			y = flow_info[i][j].match_point.x * SAMPLE_RATE;
+			cv::circle(frame1, Point(x, y), 1, Scalar(0, 255, 0), 2, CV_AA, 0);
 
-			cv::circle(frame, Point(x, y), 1, Scalar(0, 255, 0), 2, CV_AA, 0);
+			x = (j + SAMPLE_RATE / 2) * SAMPLE_RATE;
+			y = (i + SAMPLE_RATE / 2) * SAMPLE_RATE;
+			cv::circle(frame2, Point(x, y), 1, Scalar(0, 0, 255), 2, CV_AA, 0);
 		}
 	}
 }
@@ -222,7 +227,7 @@ int main()
 	match_feature_points(&frame1_image[0][0], &frame2_image[0][0]);
 
 	//flow_visualize(mat_frame1_img);
-	match_point_visualize(mat_frame1_img);
+	match_point_visualize(mat_frame1_img, mat_frame2_img);
 	//match_point_visualize(mat_frame2_img);
 
 	cv::imshow("frame2", mat_frame2_img);
