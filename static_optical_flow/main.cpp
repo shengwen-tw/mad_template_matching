@@ -198,7 +198,8 @@ void match_point_visualize(cv::Mat& frame1, cv::Mat& frame2)
 			}
 
 			//XXX:This is actually wrong!
-			if(flow_info[i][j].match_point.x == 4 || flow_info[i][j].match_point.y == 4) {
+			if(flow_info[i][j].match_point.x == TEMPLATE_SIZE / 2 ||
+				flow_info[i][j].match_point.y == TEMPLATE_SIZE / 2) {
 				continue;
 			}
 
@@ -209,8 +210,8 @@ void match_point_visualize(cv::Mat& frame1, cv::Mat& frame2)
 			y = flow_info[i][j].match_point.x * SAMPLE_RATE;
 			cv::circle(frame1, Point(x, y), 1, Scalar(0, 255, 0), 2, CV_AA, 0);
 
-			x = (j + SAMPLE_RATE / 2) * SAMPLE_RATE;
-			y = (i + SAMPLE_RATE / 2) * SAMPLE_RATE;
+			x = (j + TEMPLATE_SIZE / 2) * SAMPLE_RATE;
+			y = (i + TEMPLATE_SIZE / 2) * SAMPLE_RATE;
 			cv::circle(frame2, Point(x, y), 1, Scalar(0, 0, 255), 2, CV_AA, 0);
 		}
 	}
