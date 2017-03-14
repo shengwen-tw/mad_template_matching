@@ -8,7 +8,11 @@ CC=g++
 #################################################################
 #include files
 CFLAGS=`pkg-config opencv --cflags` `pkg-config opencv --libs`
-CFLAGS+=-Ofast
+CFLAGS+=-static-libstdc++ \
+	-static-libasan \
+	-Ofast -g \
+	-fsanitize=address \
+	-fno-omit-frame-pointer
 LDFLAGS:=
 
 #################################################################
@@ -25,4 +29,10 @@ $(EXECUTABLE):$(SRC)
 
 clean:
 	rm -rf $(EXECUTABLE)
+
+asan_run:
+	export ASAN_OPTIONS=symbolize=1
+	export ASAN_SYMBOLIZER_PATH=$(shell which llvm-symbolizer)
+	./$(EXECUTABLE)
+	
 #################################################################
