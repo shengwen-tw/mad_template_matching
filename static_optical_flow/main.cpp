@@ -11,7 +11,7 @@
 using namespace std;
 using namespace cv;
 
-#define SAMPLE_RATE 5                      //down sampling factor = 1/5
+#define SAMPLE_RATE 10                     //down sampling factor = 1/5
 
 #define FRAME_SIZE (640 / SAMPLE_RATE)     //640x640 -> 128x128
 #define TEMPLATE_SIZE 8                    //8x8
@@ -131,7 +131,7 @@ bool calculate_mad_full_frame(uint8_t *frame, uint8_t *search_template,
 		for(j = 0; j < TEMPLATE_NUMBER; j++) {
 			mad = mean_abs_diff(
 				&frame[i * FRAME_SIZE + j],
-				&search_template[i * FRAME_SIZE + j]
+				&search_template[0]
 			);
 
 			if(mad < min_mad) {
@@ -163,7 +163,7 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 	for(i = 0; i < TEMPLATE_NUMBER; i++) {
 		for(j = 0; j < TEMPLATE_NUMBER; j++) {
 			match = calculate_mad_full_frame(
-				&last_frame[i * FRAME_SIZE + j],
+				&last_frame[0],
 				&curr_frame[i * FRAME_SIZE + j],
 				&match_x, &match_y
 			);
@@ -173,10 +173,10 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 				flow_info[i][j].match_point.y = match_y;
 				flow_info[i][j].no_match_point = false;
 				flow_info[i][j].match_dist = sqrt(
-					(match_x - i * SAMPLE_RATE) *
-					(match_x - i * SAMPLE_RATE) +
-					(match_y - j * SAMPLE_RATE) *
-					(match_y - j * SAMPLE_RATE)
+					((float)match_x * SAMPLE_RATE - i * SAMPLE_RATE) *
+					((float)match_x * SAMPLE_RATE - i * SAMPLE_RATE) +
+					((float)match_y * SAMPLE_RATE - j * SAMPLE_RATE) *
+					((float)match_y * SAMPLE_RATE - j * SAMPLE_RATE)
 				);
 			} else {
 				flow_info[i][j].no_match_point = true;
@@ -196,12 +196,15 @@ void match_point_visualize(cv::Mat& frame)
 				continue;
 			}
 
-			if(flow_info[i][j].match_dist < 20) {
-				continue;	
+			if(flow_info[i][j].match_dist < 40) {
+				continue;
 			}
 
-			x = flow_info[i][j].match_point.x * SAMPLE_RATE;
-			y = flow_info[i][j].match_point.y * SAMPLE_RATE;
+			//printf("match point distance: %f\n", flow_info[i][j].match_dist);
+			//printf("match point location: (%d, %d)\n", x, y);
+
+			x = flow_info[i][j].match_point.y * SAMPLE_RATE;
+			y = flow_info[i][j].match_point.x * SAMPLE_RATE;
 
 			cv::circle(frame, Point(x, y), 1, Scalar(0, 255, 0), 2, CV_AA, 0);
 		}
@@ -219,7 +222,8 @@ int main()
 	match_feature_points(&frame1_image[0][0], &frame2_image[0][0]);
 
 	//flow_visualize(mat_frame1_img);
-	//match_point_visualize(mat_frame1_img);
+	match_point_visualize(mat_frame1_img);
+	//match_point_visualize(mat_frame2_img);
 
 	cv::imshow("frame2", mat_frame2_img);
 	cv::imshow("frame1", mat_frame1_img);
