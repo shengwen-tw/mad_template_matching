@@ -140,7 +140,7 @@ void match_feature_points(uint8_t *last_frame, uint8_t *curr_frame)
 			);
 
 			if(match == true) {
-#if 0
+#if 1
 				if(match_x == -8 || match_y == -8) {
 					flow_info[i][j].no_match_point = true;
 					continue;
@@ -177,8 +177,8 @@ void match_point_visualize(cv::Mat& frame1, cv::Mat& frame2)
 			//printf("match point distance: %f\n", flow_info[i][j].match_dist);
 			//printf("match point location: (%d, %d)\n", x, y);
 
-			x = (flow_info[i][j].match_point.y) * SAMPLE_RATE;
-			y = (flow_info[i][j].match_point.x) * SAMPLE_RATE;
+			x = (flow_info[i][j].match_point.y + TEMPLATE_FRAME_OFFSET) * SAMPLE_RATE;
+			y = (flow_info[i][j].match_point.x + TEMPLATE_FRAME_OFFSET) * SAMPLE_RATE;
 			cv::circle(frame1, Point(x, y), 1, Scalar(0, 255, 0), 2, CV_AA, 0);
 
 			x = (j + TEMPLATE_FRAME_OFFSET) * SAMPLE_RATE;
